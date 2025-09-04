@@ -1,0 +1,62 @@
+#!/bin/bash
+set -e
+source "$(realpath $(dirname $(realpath "${BASH_SOURCE[0]}"))/../)/pulsar.sh"
+
+PULSAR_INSTALLED_TASKS_PATH=${PULSAR_DATA_PATH}/pulsar.tasks
+readarray -t PULSAR_INSTALLED_TASKS < ${PULSAR_INSTALLED_TASKS_PATH}
+
+pulsar_list_installed_tasks() {
+	for task in $(pulsar_list_tasks); do
+		printf "("
+		
+		if pulsar_array_contains PULSAR_INSTALLED_TASKS "${task}"; then
+			printf "X"
+		else
+			printf " "
+		fi
+
+		printf ") %s\n" "${task}"
+	done
+}
+
+pulsar_install_tasks() {
+	for task in $*; do
+		pulsar_info "Installing apt packages associated with task '$task'"
+		readarray -t PACKAGES < ${PULSAR_TASKS_PATH}/${task}.task
+		sudo apt install -y "${PACKAGES[@]}"
+		
+		if ! pulsar_array_contains PULSAR_INSTALLED_TASKS "${task}"; then 
+			PULSAR_INSTALLED_TASKS+=("${task}")
+			pulsar_remove_blank_lines $(pulsar_array_join PULSAR_INSTALLED_TASKS '\n') > "${PULSAR_INSTALLED_TASKS_PATH}"
+		fi
+	done
+}
+
+POSITIONAL_ARGS=()
+COMMAND=""
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -i|--install)
+      COMMAND="INSTALL"
+      shift
+      ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+case ${COMMAND} in
+	INSTALL)
+		pulsar_install_tasks "${POSITIONAL_ARGS[@]}"
+		;;
+	*)
+		pulsar_list_installed_tasks
+		;;
+esac

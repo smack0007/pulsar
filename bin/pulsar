@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+source "$(realpath $(dirname $(realpath "${BASH_SOURCE[0]}"))/../)/pulsar.sh"
+
+SCRIPT="$(realpath "${BASH_SOURCE[0]}")"
+ARGS="$*"
+
+for arg in "$@"; do
+  shift
+  SCRIPT="${SCRIPT}-${arg}"
+	if [ -f "${SCRIPT}" ]; then
+    break
+  fi
+done
+
+if [ -f "${SCRIPT}" ]; then
+  source "$SCRIPT" $*
+else 
+  echo "Unknown command: ${ARGS}"
+  exit 1
+fi

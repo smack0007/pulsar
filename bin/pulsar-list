@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+source "$(realpath $(dirname $(realpath "${BASH_SOURCE[0]}"))/../)/pulsar.sh"
+
+pulsar_list_packages

@@ -1,0 +1,13 @@
+bat
+curl
+fastfetch
+fzf
+htop
+imagemagick
+jq
+lsd
+net-tools
+ripgrep
+xz-utils
+wget
+zsh

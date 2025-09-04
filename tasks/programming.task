@@ -1,0 +1,6 @@
+cmake
+distrobox
+gcc
+git
+make
+pkg-config

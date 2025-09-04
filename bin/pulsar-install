@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+source "$(realpath $(dirname $(realpath "${BASH_SOURCE[0]}"))/../)/pulsar.sh"
+
+if [ ! -f "${PULSAR_PACKAGES_PATH}/$1.sh" ]; then
+	pulsar_error "Unknown package $1"
+fi
+
+source "${PULSAR_PACKAGES_PATH}/$1.sh"
+
